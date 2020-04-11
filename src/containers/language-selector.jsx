@@ -15,8 +15,7 @@ class LanguageSelector extends React.Component {
         ]);
         document.documentElement.lang = props.currentLocale;
     }
-    handleChange (e) {
-        const newLocale = e.target.value;
+    handleChange (newLocale) {
         if (this.props.messagesByLocale[newLocale]) {
             this.props.onChangeLanguage(newLocale);
             document.documentElement.lang = newLocale;
@@ -30,12 +29,7 @@ class LanguageSelector extends React.Component {
             ...props
         } = this.props;
         return (
-            <LanguageSelectorComponent
-                onChange={this.handleChange}
-                {...props}
-            >
-                {children}
-            </LanguageSelectorComponent>
+            <LanguageSelectorComponent onChange={this.handleChange} {...props} />
         );
     }
 }

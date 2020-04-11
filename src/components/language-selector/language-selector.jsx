@@ -3,30 +3,25 @@ import React from 'react';
 
 import locales from 'scratch-l10n';
 import styles from './language-selector.css';
+import { MenuItem, MenuSection } from '../menu/menu.jsx';
 
-// supported languages to exclude from the menu, but allow as a URL option
-const ignore = [];
+const LanguageSupport = ['zh-cn','en']
 
-const LanguageSelector = ({currentLocale, label, onChange}) => (
-    <select
-        aria-label={label}
-        className={styles.languageSelect}
-        value={currentLocale}
-        onChange={onChange}
-    >
+const LanguageSelector = ({currentLocale, onChange}) => (
+    <MenuSection>
         {
             Object.keys(locales)
-                .filter(l => !ignore.includes(l))
-                .map(locale => (
-                    <option
-                        key={locale}
-                        value={locale}
+                .filter(key => LanguageSupport.includes(key))
+                .map((locale, index) => (
+                    <MenuItem
+                        key={index}
+                        onClick={() => onChange(locale)}
                     >
                         {locales[locale].name}
-                    </option>
+                    </MenuItem>
                 ))
         }
-    </select>
+    </MenuSection>
 );
 
 LanguageSelector.propTypes = {

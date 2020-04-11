@@ -70,7 +70,7 @@ import remixIcon from './icon--remix.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
 
-import {LogoImg, LogoHandler} from './scratch-logo.jsx';
+import scratchLogo from './scratch-logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
 
@@ -328,7 +328,7 @@ class MenuBar extends React.Component {
                                 })}
                                 draggable={false}
                                 src={this.props.logo}
-                                onClick={typeof LogoHandler !== 'undefined' ? LogoHandler : this.props.onClickLogo}
+                                onClick={this.props.onClickLogo}
                             />
                         </div>
                         {(this.props.canChangeLanguage) && (<div
@@ -755,7 +755,7 @@ MenuBar.propTypes = {
 };
 
 MenuBar.defaultProps = {
-    logo: LogoImg,
+    logo: scratchLogo,
     onShare: () => {}
 };
 

@@ -15,6 +15,7 @@ class LanguageCustomize extends React.Component {
                 'gui.menuBar.LoadFromComputer':'从电脑加载',
                 'gui.menuBar.LoadFromCloud':'从云端加载',
                 'gui.menuBar.Release':'发布',
+                'gui.menuBar.Login':'登录',
             },
             'en':{
                 'gui.menuBar.New':  'New',
@@ -25,6 +26,7 @@ class LanguageCustomize extends React.Component {
                 'gui.menuBar.LoadFromComputer':'Load From Computer',
                 'gui.menuBar.LoadFromCloud':'Load From Cloud',
                 'gui.menuBar.Release':'Release',
+                'gui.menuBar.Login':'Login',
             }
         }
     }

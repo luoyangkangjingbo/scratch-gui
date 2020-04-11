@@ -71,6 +71,7 @@ import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
 
 import sharedMessages from '../../lib/shared-messages';
+import LanguageCustomize from '../../lib/customize-language.jsx';
 
 const ariaMessages = defineMessages({
     language: {
@@ -345,12 +346,6 @@ class MenuBar extends React.Component {
                                     className={styles.languageIcon}
                                     src={languageIcon}
                                 />
-                                {/*
-                                    <img
-                                        className={styles.languageCaret}
-                                        src={dropdownCaret}
-                                    />
-                                */}
                             </div>
                             <MenuBarMenu
                                 className={classNames(styles.menuBarMenu)}

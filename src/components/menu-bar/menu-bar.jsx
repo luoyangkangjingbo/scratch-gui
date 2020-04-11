@@ -70,8 +70,6 @@ import remixIcon from './icon--remix.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
 
-import scratchLogo from './scratch-logo.svg';
-
 import sharedMessages from '../../lib/shared-messages';
 
 const ariaMessages = defineMessages({
@@ -321,15 +319,20 @@ class MenuBar extends React.Component {
                 <div className={styles.mainMenu}>
                     <div className={styles.fileGroup}>
                         <div className={classNames(styles.menuBarItem)}>
-                            <img
-                                alt="Scratch"
-                                className={classNames(styles.scratchLogo, {
-                                    [styles.clickable]: typeof this.props.onClickLogo !== 'undefined'
-                                })}
-                                draggable={false}
-                                src={this.props.logo}
-                                onClick={this.props.onClickLogo}
-                            />
+                            {typeof this.props.logo === 'string' ? (
+                                    <img
+                                        alt="Scratch"
+                                        className={classNames(styles.scratchLogo, {
+                                            [styles.clickable]: typeof this.props.onClickLogo !== 'undefined'
+                                        })}
+                                        draggable={false}
+                                        src={this.props.logo}
+                                        onClick={this.props.onClickLogo}
+                                    />
+                                ):(
+                                    null
+                                )
+                            }
                         </div>
                         {(this.props.canChangeLanguage) && (<div
                             className={classNames(styles.menuBarItem, styles.hoverable, styles.languageMenu)}
@@ -755,7 +758,6 @@ MenuBar.propTypes = {
 };
 
 MenuBar.defaultProps = {
-    logo: scratchLogo,
     onShare: () => {}
 };
 

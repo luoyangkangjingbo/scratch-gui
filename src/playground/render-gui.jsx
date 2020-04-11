@@ -7,6 +7,8 @@ import GUI from '../containers/gui.jsx';
 import HashParserHOC from '../lib/hash-parser-hoc.jsx';
 import log from '../lib/log.js';
 
+// Scratch Logo will be customized Soon
+import scratchLogo from '../lib/assets/scratch-logo.svg';
 const onClickLogo = () => {
     window.location = 'https://scratch.mit.edu';
 };
@@ -79,6 +81,7 @@ export default appTarget => {
                 showComingSoon
                 backpackHost={backpackHost}
                 canSave={false}
+                logo={scratchLogo}
                 onClickLogo={onClickLogo}
             />,
         appTarget);

@@ -172,11 +172,11 @@ class MenuBar extends React.Component {
         const readyToReplaceProject = this.props.confirmReadyToReplaceProject(
             this.props.intl.formatMessage(sharedMessages.replaceProjectWarning)
         );
-        this.props.onRequestCloseFile();
+        // this.props.onRequestCloseFile();
         if (readyToReplaceProject) {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
         }
-        this.props.onRequestCloseFile();
+        // this.props.onRequestCloseFile();
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -366,7 +366,7 @@ class MenuBar extends React.Component {
                     {/* menu-bar new */}
                     {(this.props.canManageFiles) && (<div
                         className={classNames(styles.menuBarItem, styles.hoverable)}
-                        onClick={()=>{console.log("Project New")}}>
+                        onClick={this.handleClickNew}>
                             <LanguageCustomize id='gui.menuBar.New'/>
                     </div>)}
 

@@ -43,7 +43,13 @@ class CustomeLoadFileToCloud extends React.PureComponent {
 
     ConfirmHandler() {
         // TODO: confirm handler
-        this.props.onRequestClose()
+        var ret = confirm("是否选择继续?")
+        if (ret) {
+            this.props.onRequestClose()
+            console.log("继续")
+        } else {
+            console.log("放弃")
+        }
     }
 
     render() {

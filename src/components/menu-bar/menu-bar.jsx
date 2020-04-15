@@ -30,7 +30,13 @@ import DeletionRestorer from '../../containers/deletion-restorer.jsx';
 import TurboMode from '../../containers/turbo-mode.jsx';
 import MenuBarHOC from '../../containers/menu-bar-hoc.jsx';
 
-import {openTipsLibrary} from '../../reducers/modals';
+import {
+    openTipsLibrary,
+    openCustomLoadFileFromCloud,
+    openCustomLoadFileToComputer,
+    openCustomLoadFileToCloud
+} from '../../reducers/modals';
+
 import {setPlayer} from '../../reducers/mode';
 import {
     autoUpdateProject,
@@ -420,7 +426,9 @@ class MenuBar extends React.Component {
                                     </SBFileUploader>
 
                                     {/* menu-bar File: load from cloud */}
-                                   <MenuItem onClick={()=>{console.log("Project Load From Cloud")}}>
+                                   <MenuItem
+                                        onClick={this.props.onCustomLoadFileFromCloud}
+                                    >
                                         <LanguageCustomize id='gui.menuBar.LoadFromCloud' />
                                     </MenuItem>
 
@@ -435,7 +443,9 @@ class MenuBar extends React.Component {
                                     )}</SB3Downloader>
 
                                     {/* menu-bar File: save to cloud */}
-                                   <MenuItem onClick={()=>{console.log("Project Save To Cloud")}}>
+                                   <MenuItem
+                                        onClick={this.props.onCustomLoadFileToCloud}
+                                    >
                                         <LanguageCustomize id='gui.menuBar.SaveToCloud' />
                                     </MenuItem>
 
@@ -656,7 +666,10 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true))
+    onSeeCommunity: () => dispatch(setPlayer(true)),
+    onCustomLoadFileFromCloud: () => dispatch(openCustomLoadFileFromCloud()),
+    onCustomLoadFileToComputer: () => dispatch(openCustomLoadFileToComputer()),
+    onCustomLoadFileToCloud: () => dispatch(openCustomLoadFileToCloud()),
 });
 
 export default compose(

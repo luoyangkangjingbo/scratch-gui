@@ -22,7 +22,10 @@ import {
     closeCostumeLibrary,
     closeBackdropLibrary,
     closeTelemetryModal,
-    openExtensionLibrary
+    openExtensionLibrary,
+    closeCustomLoadFileFromCloud,
+    closeCustomLoadFileToComputer,
+    closeCustomLoadFileToCloud
 } from '../reducers/modals';
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
@@ -112,6 +115,9 @@ GUI.propTypes = {
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     telemetryModalVisible: PropTypes.bool,
+    customLoadFileFromCloudVisible: PropTypes.bool,
+    customLoadFileToComputerVisible: PropTypes.bool,
+    customLoadFileToCloudVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
@@ -149,6 +155,9 @@ const mapStateToProps = state => {
         ),
         telemetryModalVisible: state.scratchGui.modals.telemetryModal,
         tipsLibraryVisible: state.scratchGui.modals.tipsLibrary,
+        customLoadFileFromCloudVisible: state.scratchGui.modals.customLoadFileFromCloud,
+        customLoadFileToComputerVisible: state.scratchGui.modals.customLoadFileToComputer,
+        customLoadFileToCloudVisible: state.scratchGui.modals.customLoadFileToCloud,
         vm: state.scratchGui.vm
     };
 };
@@ -160,7 +169,10 @@ const mapDispatchToProps = dispatch => ({
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
-    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
+    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    onRequestCloseCustomLoadFileFromCloud: () => dispatch(closeCustomLoadFileFromCloud()),
+    onRequestCloseCustomLoadFileToComputer: () => dispatch(closeCustomLoadFileToComputer()),
+    onRequestCloseCustomLoadFileToCloud: () => dispatch(closeCustomLoadFileToCloud()),
 });
 
 const ConnectedGUI = injectIntl(connect(

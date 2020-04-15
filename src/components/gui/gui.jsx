@@ -30,6 +30,9 @@ import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
+import CustomLoadFileFromCloud from '../custom-files/custom-load-file-from-cloud.jsx';
+import CustomLoadFileToComputer from '../custom-files/custom-load-file-to-computer.jsx';
+import CustomLoadFileToCloud from '../custom-files/custom-load-file-to-cloud.jsx';
 
 import layout, {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
@@ -103,6 +106,9 @@ const GUIComponent = props => {
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
         onRequestCloseTelemetryModal,
+        onRequestCloseCustomLoadFileFromCloud,
+        onRequestCloseCustomLoadFileToComputer,
+        onRequestCloseCustomLoadFileToCloud,
         onSeeCommunity,
         onShare,
         onTelemetryModalCancel,
@@ -114,6 +120,9 @@ const GUIComponent = props => {
         targetIsStage,
         telemetryModalVisible,
         tipsLibraryVisible,
+        customLoadFileFromCloudVisible,
+        customLoadFileToComputerVisible,
+        customLoadFileToCloudVisible,
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
@@ -197,6 +206,30 @@ const GUIComponent = props => {
                     <BackdropLibrary
                         vm={vm}
                         onRequestClose={onRequestCloseBackdropLibrary}
+                    />
+                ) : null}
+                {customLoadFileFromCloudVisible ? (
+                    <CustomLoadFileFromCloud
+                        onRequestFilename={null}
+                        onRequestFilepath={null}
+                        onRequestFiledate={null}
+                        onRequestClose={onRequestCloseCustomLoadFileFromCloud}
+                    />
+                ) : null}
+                {customLoadFileToComputerVisible ? (
+                    <CustomLoadFileToComputer
+                        onRequestFilename={null}
+                        onRequestFilepath={null}
+                        onRequestFiledate={null}
+                        onRequestClose={onRequestCloseCustomLoadFileToComputer}
+                    />
+                ) : null}
+                {customLoadFileToCloudVisible ? (
+                    <CustomLoadFileToCloud
+                        onRequestFilename={null}
+                        onRequestFilepath={null}
+                        onRequestFiledate={null}
+                        onRequestClose={onRequestCloseCustomLoadFileToCloud}
                     />
                 ) : null}
                 <MenuBar
@@ -397,6 +430,9 @@ GUIComponent.propTypes = {
     onRequestCloseBackdropLibrary: PropTypes.func,
     onRequestCloseCostumeLibrary: PropTypes.func,
     onRequestCloseTelemetryModal: PropTypes.func,
+    onRequestCloseCustomLoadFileFromCloud: PropTypes.func,
+    onRequestCloseCustomLoadFileToComputer: PropTypes.func,
+    onRequestCloseCustomLoadFileToCloud: PropTypes.func,
     onSeeCommunity: PropTypes.func,
     onShare: PropTypes.func,
     onTabSelect: PropTypes.func,
@@ -411,6 +447,9 @@ GUIComponent.propTypes = {
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
+    customLoadFileFromCloudVisible: PropTypes.bool,
+    customLoadFileToComputerVisible: PropTypes.bool,
+    customLoadFileToCloudVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 GUIComponent.defaultProps = {

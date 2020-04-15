@@ -30,9 +30,7 @@ import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
-import CustomLoadFileFromCloud from '../custom-files/custom-load-file-from-cloud.jsx';
-import CustomLoadFileToComputer from '../custom-files/custom-load-file-to-computer.jsx';
-import CustomLoadFileToCloud from '../custom-files/custom-load-file-to-cloud.jsx';
+import CustomFiles from '../../containers/custom-files.jsx';
 
 import layout, {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
@@ -209,26 +207,20 @@ const GUIComponent = props => {
                     />
                 ) : null}
                 {customLoadFileFromCloudVisible ? (
-                    <CustomLoadFileFromCloud
-                        onRequestFilename={null}
-                        onRequestFilepath={null}
-                        onRequestFiledate={null}
+                    <CustomFiles
+                        userOperation={'LoadFileFromCloud'}
                         onRequestClose={onRequestCloseCustomLoadFileFromCloud}
                     />
                 ) : null}
                 {customLoadFileToComputerVisible ? (
-                    <CustomLoadFileToComputer
-                        onRequestFilename={null}
-                        onRequestFilepath={null}
-                        onRequestFiledate={null}
+                    <CustomFiles
+                        userOperation={'LoadFileToComputer'}
                         onRequestClose={onRequestCloseCustomLoadFileToComputer}
                     />
                 ) : null}
                 {customLoadFileToCloudVisible ? (
-                    <CustomLoadFileToCloud
-                        onRequestFilename={null}
-                        onRequestFilepath={null}
-                        onRequestFiledate={null}
+                    <CustomFiles
+                        userOperation={'LoadFileToCloud'}
                         onRequestClose={onRequestCloseCustomLoadFileToCloud}
                     />
                 ) : null}

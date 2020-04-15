@@ -25,6 +25,7 @@ import timeoutReducer, {timeoutInitialState} from './timeout';
 import toolboxReducer, {toolboxInitialState} from './toolbox';
 import vmReducer, {vmInitialState} from './vm';
 import vmStatusReducer, {vmStatusInitialState} from './vm-status';
+import customFilesReducer, {customFilesInitialState} from './custom-files';
 import throttle from 'redux-throttle';
 
 import decks from '../lib/libraries/decks/index.jsx';
@@ -57,7 +58,8 @@ const guiInitialState = {
     timeout: timeoutInitialState,
     toolbox: toolboxInitialState,
     vm: vmInitialState,
-    vmStatus: vmStatusInitialState
+    vmStatus: vmStatusInitialState,
+    customFiles: customFilesInitialState
 };
 
 const initPlayer = function (currentState) {
@@ -155,7 +157,8 @@ const guiReducer = combineReducers({
     timeout: timeoutReducer,
     toolbox: toolboxReducer,
     vm: vmReducer,
-    vmStatus: vmStatusReducer
+    vmStatus: vmStatusReducer,
+    customFiles: customFilesReducer
 });
 
 export {

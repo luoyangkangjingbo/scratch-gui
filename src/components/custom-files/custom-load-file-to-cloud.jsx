@@ -26,7 +26,8 @@ class CustomeLoadFileToCloud extends React.PureComponent {
                             <div className={styles.fileLine}>
                                 <div>文件路径</div>
                                 <input type="text"
-                                    value={this.props.onRequestFilepath()}
+                                    defaultValue={this.props.onRequestFilepath()}
+                                    disabled
                                 />
                             </div>
                         </Box>

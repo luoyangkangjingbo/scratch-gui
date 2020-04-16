@@ -433,14 +433,11 @@ class MenuBar extends React.Component {
                                     </MenuItem>
 
                                     {/* menu-bar File: save to computer */} 
-                                    <SB3Downloader>{(className, downloadProjectCallback) => (
-                                        <MenuItem
-                                            className={className}
-                                            onClick={this.getSaveToComputerHandler(downloadProjectCallback)}
-                                        >
-                                            <LanguageCustomize id='gui.menuBar.SaveToComputer' />
-                                        </MenuItem>
-                                    )}</SB3Downloader>
+                                   <MenuItem
+                                        onClick={this.props.onCustomLoadFileToComputer}
+                                    >
+                                        <LanguageCustomize id='gui.menuBar.SaveToComputer' />
+                                    </MenuItem>
 
                                     {/* menu-bar File: save to cloud */}
                                    <MenuItem

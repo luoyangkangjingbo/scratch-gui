@@ -3,6 +3,7 @@ import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {injectIntl} from 'react-intl';
+import downloadBlob from '../lib/download-blob';
 import CustomeLoadFileFromCloud  from '../components/custom-files/custom-load-file-from-cloud.jsx';
 import CustomeLoadFileToComputer from '../components/custom-files/custom-load-file-to-computer.jsx';
 import CustomeLoadFileToCloud    from '../components/custom-files/custom-load-file-to-cloud.jsx';
@@ -31,13 +32,13 @@ class CustomFiles extends React.Component {
     }
 
     // load file from cloud handlers
-    fileFromCloudNameHandler() {
-
+    fileFromCloudNameHandler(e) {
+        this.projectFileName = e.target.value
     }
 
     fileFromCloudPathHandler() {
         return (
-            'fileFromCloudPathHandler'
+            ''
         )
     }
 
@@ -46,55 +47,60 @@ class CustomFiles extends React.Component {
     }
 
     fileFromCloudCancelHandler() {
-
+        this.props.onRequestClose()
     }
 
     fileFromCloudConfirmHandler() {
-        var ret = confirm("是否选择继续?")
-        if (ret) {
-            this.props.onRequestClose()
-            console.log("继续")
-        } else {
-            console.log("放弃")
-        }
+        this.props.onRequestClose()
+        // var ret = confirm("是否选择继续?")
+        // if (ret) {
+        //     console.log("继续")
+        // } else {
+        //     console.log("放弃")
+        // }
     }
 
     // load file to computer handler
-    fileToComputerNameHandler() {
-
+    fileToComputerNameHandler(e) {
+        this.projectFileName=e.target.value
     }
 
     fileToComputerPathHandler() {
         return (
-            'fileToComputerPathHandler'
+            ''
         )
     }
 
     fileToComputerCancelHandler() {
-
+        this.props.onRequestClose()
     }
 
     fileToComputerConfirmHandler() {
-
+        // download file here
+        this.props.saveProjectSb3().then( content => {
+            downloadBlob(this.projectFileName.toString()+'.sb3', content)
+        })
+        this.props.onRequestClose()
     }
 
     // load file to cloud handler
-    fileToCloudNameHandler() {
-
+    fileToCloudNameHandler(e) {
+        this.projectFileName = e.target.value
     }
 
     fileToCloudPathHandler() {
         return (
-            'fileToCloudPathHandler'
+            ''
         )
     }
 
     fileToCloudCancelHandler() {
-
+        this.props.onRequestClose()
     }
 
     fileToCloudConfirmHandler() {
-
+        // check if try to reload them
+        this.props.onRequestClose()
     }
 
     render() {
@@ -149,7 +155,8 @@ const mapStateToProps = state => {
     return {
         fileOperation: loadingState.operation,
         fileName: loadingState.name,
-        filePath: loadingState.path
+        filePath: loadingState.path,
+        saveProjectSb3: state.scratchGui.vm.saveProjectSb3.bind(state.scratchGui.vm),
     };
 };
 

@@ -23,7 +23,6 @@ const HashParserHOC = function (WrappedComponent) {
         }
         componentDidMount () {
             window.addEventListener('hashchange', this.handleHashChange);
-            this.handleHashChange();
         }
         componentDidUpdate (prevProps) {
             // if we are newly fetching a non-hash project...
@@ -47,11 +46,17 @@ const HashParserHOC = function (WrappedComponent) {
                 isFetchingWithoutId: isFetchingWithoutIdProp,
                 reduxProjectId,
                 setProjectId: setProjectIdProp,
+                projectId,
                 /* eslint-enable no-unused-vars */
                 ...componentProps
             } = this.props;
             return (
                 <WrappedComponent
+                    projectId={(
+                        projectId !== '' &&
+                        projectId !== null &&
+                        typeof projectId !== 'undefined'
+                    )?projectId:defaultProjectId}
                     {...componentProps}
                 />
             );

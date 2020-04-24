@@ -41,6 +41,8 @@
 
 .stage-wrapper {
     position: relative;
+    display: inline-block;
+    width: auto;
 }
 
 .stage-wrapper-overlay {

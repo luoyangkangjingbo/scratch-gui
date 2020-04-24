@@ -16,6 +16,7 @@
 }
 
 .stage-menu-wrapper {
+    width: auto;
     display: flex;
     margin: auto;
     justify-content: space-between;

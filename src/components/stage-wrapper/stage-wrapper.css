@@ -5,6 +5,11 @@
     box-sizing: border-box;
 }
 
+.stage-wrapper {
+    width: auto;
+    display: inline-block;
+}
+
 .stage-canvas-wrapper {
     /* Hides negative space between edge of rounded corners + container, when selected */
     user-select: none;

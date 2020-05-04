@@ -21,6 +21,19 @@ const appTarget = document.createElement('div');
 appTarget.className = styles.app;
 document.body.appendChild(appTarget);
 
+var widthScale  = 0
+var heightScale = 0
+if (document.body.offsetWidth < document.body.offsetHeight) {
+    widthScale  = document.body.offsetHeight / 1024
+    heightScale = document.body.offsetWidth / 640
+} else {
+    widthScale  = document.body.offsetWidth / 1024
+    heightScale = document.body.offsetHeight /640
+}
+
+appTarget.style.transform =`scale(${widthScale},${heightScale})`
+appTarget.style.webkitTransform = `scale(${widthScale},${heightScale})`
+
 if (supportedBrowser()) {
     // require needed here to avoid importing unsupported browser-crashing code
     // at the top level

@@ -376,7 +376,7 @@ class MenuBar extends React.Component {
                                 <LanguageSelector />
                             </MenuBarMenu>
                         </div>)}
-                        {(this.props.canManageFiles) && (
+                        {(this.props.canManageFiles) && (this.props.isPC) && (
                             <div
                                 className={classNames(styles.menuBarItem, styles.hoverable, {
                                     [styles.active]: this.props.fileMenuOpen
@@ -735,6 +735,7 @@ MenuBar.propTypes = {
     canCreateNew: PropTypes.bool,
     canEditTitle: PropTypes.bool,
     canManageFiles: PropTypes.bool,
+    isPC: PropTypes.bool,
     canRemix: PropTypes.bool,
     canSave: PropTypes.bool,
     canShare: PropTypes.bool,

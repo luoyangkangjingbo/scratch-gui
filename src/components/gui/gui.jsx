@@ -70,6 +70,7 @@ const GUIComponent = props => {
         canCreateNew,
         canEditTitle,
         canManageFiles,
+        isPC,
         canRemix,
         canSave,
         canCreateCopy,
@@ -209,6 +210,7 @@ const GUIComponent = props => {
                     canCreateNew={canCreateNew}
                     canEditTitle={canEditTitle}
                     canManageFiles={canManageFiles}
+                    isPC={isPC}
                     canRemix={canRemix}
                     canSave={canSave}
                     canShare={canShare}

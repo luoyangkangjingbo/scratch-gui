@@ -38,6 +38,8 @@ if ((!isPC())  && (document.body.clientWidth < 1024)) {
     appTarget.style.transform = `scale(${widthScale}, ${heightScale})`
     appTarget.style.webkitTransform = `scale(${widthScale}, ${heightScale})`
 } else {
+    appTarget.style.width = '100%'
+    appTarget.style.height = '100%'
     appTarget.style.minWidth  = '1024px'
     appTarget.style.minHeight = '640px'
 }

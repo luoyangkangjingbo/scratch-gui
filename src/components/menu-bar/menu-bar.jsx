@@ -145,7 +145,8 @@ class MenuBar extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleClickNew',
+            'handleClickNewProject',
+            'handleClickSaveProject',
             'handleClickRemix',
             'handleClickSave',
             'handleClickSaveAsCopy',
@@ -155,7 +156,8 @@ class MenuBar extends React.Component {
             'handleLanguageMouseUp',
             'handleRestoreOption',
             'getSaveToComputerHandler',
-            'restoreOptionMessage'
+            'restoreOptionMessage',
+            'handleClickShowKeyBoard'
         ]);
     }
     componentDidMount () {
@@ -164,7 +166,7 @@ class MenuBar extends React.Component {
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
     }
-    handleClickNew () {
+    handleClickNewProject () {
         // if the project is dirty, and user owns the project, we will autosave.
         // but if they are not logged in and can't save, user should consider
         // downloading or logging in first.
@@ -178,6 +180,9 @@ class MenuBar extends React.Component {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
         }
         this.props.onRequestCloseFile();
+    }
+    handleClickSaveProject () {
+        console.log("TODO: implement save project")
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -269,6 +274,9 @@ class MenuBar extends React.Component {
         }
         }
     }
+    handleClickShowKeyBoard() {
+        console.log("TODO: implement show key-board")
+    }
     render () {
         const saveNowMessage = (
             <FormattedMessage
@@ -293,9 +301,23 @@ class MenuBar extends React.Component {
         );
         const newProjectMessage = (
             <FormattedMessage
-                defaultMessage="New"
+                defaultMessage="New Project"
                 description="Menu bar item for creating a new project"
-                id="gui.menuBar.new"
+                id="gui.menuBar.BACNew"
+            />
+        );
+        const saveProjectMessage = (
+            <FormattedMessage
+                defaultMessage="Save Project"
+                description="Menu bar item for saving a exist project"
+                id="gui.menuBar.BACSave"
+            />
+        );
+        const showKeyBoardMessage = (
+            <FormattedMessage
+                defaultMessage="Key Board"
+                description="Menu bar item for saving a exist project"
+                id="gui.menuBar.BACKeyBoard"
             />
         );
         const remixButton = (
@@ -364,14 +386,6 @@ class MenuBar extends React.Component {
                                     place={this.props.isRtl ? 'left' : 'right'}
                                     onRequestClose={this.props.onRequestCloseFile}
                                 >
-                                    <MenuSection>
-                                        <MenuItem
-                                            isRtl={this.props.isRtl}
-                                            onClick={this.handleClickNew}
-                                        >
-                                            {newProjectMessage}
-                                        </MenuItem>
-                                    </MenuSection>
                                     {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
                                         <MenuSection>
                                             {this.props.canSave && (
@@ -425,6 +439,12 @@ class MenuBar extends React.Component {
                             </div>
                         )}
                         <div
+                            className={classNames(styles.menuBarItem, styles.hoverable)}
+                            onClick={this.handleClickNewProject}
+                        >
+                            {newProjectMessage}
+                        </div>
+                        <div
                             className={classNames(styles.menuBarItem, styles.hoverable, {
                                 [styles.active]: this.props.editMenuOpen
                             })}
@@ -473,17 +493,11 @@ class MenuBar extends React.Component {
                             </MenuBarMenu>
                         </div>
                     </div>
-                    <Divider className={classNames(styles.divider)} />
                     <div
-                        aria-label={this.props.intl.formatMessage(ariaMessages.tutorials)}
-                        className={classNames(styles.menuBarItem, styles.hoverable)}
-                        onClick={this.props.onOpenTipLibrary}
-                    >
-                        <img
-                            className={styles.helpIcon}
-                            src={helpIcon}
-                        />
-                        <FormattedMessage {...ariaMessages.tutorials} />
+                            className={classNames(styles.menuBarItem, styles.hoverable)}
+                            onClick={this.handleClickSaveProject}
+                        >
+                            {saveProjectMessage}
                     </div>
                     <Divider className={classNames(styles.divider)} />
                     {this.props.canEditTitle ? (
@@ -497,15 +511,8 @@ class MenuBar extends React.Component {
                                 />
                             </MenuBarItemTooltip>
                         </div>
-                    ) : ((this.props.authorUsername && this.props.authorUsername !== this.props.username) ? (
-                        <AuthorInfo
-                            className={styles.authorInfo}
-                            imageUrl={this.props.authorThumbnailUrl}
-                            projectTitle={this.props.projectTitle}
-                            userId={this.props.authorId}
-                            username={this.props.authorUsername}
-                        />
-                    ) : null)}
+                    ) : (null)}
+                    <Divider className={classNames(styles.divider)} />
                     <div className={classNames(styles.menuBarItem)}>
                         {this.props.canShare ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
@@ -527,9 +534,7 @@ class MenuBar extends React.Component {
                             )
                         ) : (
                             this.props.showComingSoon ? (
-                                <MenuBarItemTooltip id="share-button">
-                                    <ShareButton className={styles.menuBarButton} />
-                                </MenuBarItemTooltip>
+                                <ShareButton className={styles.menuBarButton} />
                             ) : []
                         )}
                         {this.props.canRemix ? remixButton : []}
@@ -553,10 +558,27 @@ class MenuBar extends React.Component {
                                 </ProjectWatcher>
                             )
                         ) : (this.props.showComingSoon ? (
-                            <MenuBarItemTooltip id="community-button">
-                                <CommunityButton className={styles.menuBarButton} />
-                            </MenuBarItemTooltip>
+                            <CommunityButton className={styles.menuBarButton} />
                         ) : [])}
+                    </div>
+                    <Divider className={classNames(styles.divider)} />
+                    <div
+                            className={classNames(styles.menuBarItem, styles.hoverable)}
+                            onClick={this.handleClickShowKeyBoard}
+                        >
+                            {showKeyBoardMessage}
+                    </div>
+                    <Divider className={classNames(styles.divider)} />
+                    <div
+                        aria-label={this.props.intl.formatMessage(ariaMessages.tutorials)}
+                        className={classNames(styles.menuBarItem, styles.hoverable)}
+                        onClick={this.props.onOpenTipLibrary}
+                    >
+                        <img
+                            className={styles.helpIcon}
+                            src={helpIcon}
+                        />
+                        <FormattedMessage {...ariaMessages.tutorials} />
                     </div>
                 </div>
 

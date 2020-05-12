@@ -29,7 +29,7 @@ const ShareButton = ({
             <FormattedMessage
                 defaultMessage="Share"
                 description="Label for project share button"
-                id="gui.menuBar.share"
+                id="gui.menuBar.BACShare"
             />
         )}
     </Button>

@@ -6,6 +6,8 @@ import {connect} from 'react-redux';
 
 import {
     getIsIdleProject,
+    getIsFetchingJSON,
+    getIsFetchingICON,
     getIsFetchingProject,
     fetchProject,
     doneFetchProject
@@ -24,31 +26,41 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
         constructor(props) {
             super(props);
             bindAll(this, [
+                'fetchProjectJSONFromServer',
+                'fetchProjectIconFromServer',
                 'fetchProjectFromServer',
                 'onLoad',
-                'resetReader'
             ]);
             if (
                 props.prefixURI !== '' &&
                 props.prefixURI !== null &&
                 typeof props.prefixURI !== 'undefined'
             ) {
-                this.props.fetchProject(props.prefixURI+props.suffixURI)
+                // only when project is Idle
+                if (props.isIdleProject) {
+                    this.props.fetchProject(props.prefixURI+props.suffixURI)
+                }
             }
         }
         componentWillMount () {
             this.reader = new FileReader()
             this.reader.onload = this.onLoad
-            this.resetReader();
         }
         componentDidUpdate(prevProps) {
-            if (this.props.isFetchingProject && !prevProps.isFetchingProject) {
+            if (this.props.isFetchingJSON && !prevProps.isFetchingJSON) {
+                this.fetchProjectJSONFromServer()
+            }
+            if (this.props.isFetchingICON && !prevProps.isFetchingICON) {
+                this.fetchProjectIconFromServer()
+            }
+            if (this.props.isFetchingProject && !prevProps.isFetchingProject && this.reader) {
                 this.fetchProjectFromServer()
             }
         }
-        fetchProjectFromServer() {
+        fetchProjectJSONFromServer() {
+            // fetch project information
             var myHeaders = new Headers()
-            myHeaders.append('Content-Type', 'application/scratch.sb3')
+            myHeaders.append('Content-Type', 'application/json')
             fetch(this.props.fullURI, {
               method: 'GET',
               headers: myHeaders,
@@ -56,32 +68,84 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
                 if (response.status === 200) {
                     response.blob().then(myBlob => {
                         this.reader.readAsArrayBuffer(myBlob)
+                    }).catch(error => {
+                        // read blob into arrayBuffer fail
+                        this.props.doneFetchProject(false)
                     })
                 } else {
-                    // TODO: implement error process
+                    // fetch project from server error
+                    this.props.doneFetchProject(false)
                 }
+            }).catch(error => {
+                // fetch project from server net error
+                this.props.doneFetchProject(false)
+            })
+        }
+        fetchProjectIconFromServer() {
+            // fetch project icon
+            var myHeaders = new Headers()
+            myHeaders.append('Content-Type', 'application/image')
+            fetch(this.props.fullURI, {
+              method: 'GET',
+              headers: myHeaders,
+            }).then(response => {
+                if (response.status === 200) {
+                    response.blob().then(myBlob => {
+                        this.reader.readAsArrayBuffer(myBlob)
+                    }).catch(error => {
+                        // read blob into arrayBuffer fail
+                        this.props.doneFetchProject(false)
+                    })
+                } else {
+                    // fetch project from server error
+                    this.props.doneFetchProject(false)
+                }
+            }).catch(error => {
+                // fetch project from server net error
+                this.props.doneFetchProject(false)
+            })
+        }
+        fetchProjectFromServer() {
+            var myHeaders = new Headers()
+            myHeaders.append('Content-Type', 'application/x.scratch.sb3')
+            fetch(this.props.fullURI, {
+              method: 'GET',
+              headers: myHeaders,
+            }).then(response => {
+                if (response.status === 200) {
+                    response.blob().then(myBlob => {
+                        this.reader.readAsArrayBuffer(myBlob)
+                    }).catch(error => {
+                        // read blob into arrayBuffer fail
+                        this.props.doneFetchProject(false)
+                    })
+                } else {
+                    // fetch project from server error
+                    this.props.doneFetchProject(false)
+                }
+            }).catch(error => {
+                // fetch project from server net error
+                this.props.doneFetchProject(false)
             })
         }
         onLoad() {
             this.props.vm.loadProject(this.reader.result)
                 .then(() => {
-                    this.props.doneFetchProject();
-                    this.resetReader();
-                })
-                .catch(error => {
-                    // TODO: impolement error process
-                    this.resetReader();
-                    this.props.doneFetchProject();
+                    this.props.doneFetchProject(true);
+                }).catch(error => {
+                    // load file into scratch vm fail
+                    this.props.doneFetchProject(false);
                 });
         }
-        resetReader () {
-        }
+
         render() {
             const {
                 intl,
                 prefixURI,
                 suffixURI,
                 fullURI,
+                isFetchingJSON,
+                isFetchingICON,
                 isFetchingProject,
                 isIdleProject,
                 fetchProject,
@@ -102,6 +166,8 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
         prefixURI: PropTypes.string,
         suffixURI: PropTypes.string,
         fullURI: PropTypes.string,
+        isFetchingJSON: PropTypes.bool,
+        isFetchingICON: PropTypes.bool,
         isFetchingProject: PropTypes.bool,
         isIdleProject: PropTypes.bool,
         fetchProject: PropTypes.func,
@@ -113,6 +179,8 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
 
     const mapStateToProps = state => ({
         fullURI: state.scratchGui.BACProjectState.projectURI,
+        isFetchingJSON: getIsFetchingJSON(state.scratchGui.BACProjectState.loadingState),
+        isFetchingICON: getIsFetchingICON(state.scratchGui.BACProjectState.loadingState),
         isFetchingProject: getIsFetchingProject(state.scratchGui.BACProjectState.loadingState),
         isIdleProject: getIsIdleProject(state.scratchGui.BACProjectState.loadingState),
         vm: state.scratchGui.vm

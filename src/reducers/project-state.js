@@ -274,6 +274,7 @@ const reducer = function (state, action) {
         return state;
     case START_FETCHING_NEW:
         if ([
+            LoadingState.NOT_LOADED,
             LoadingState.SHOWING_WITH_ID,
             LoadingState.SHOWING_WITHOUT_ID
         ].includes(state.loadingState)) {

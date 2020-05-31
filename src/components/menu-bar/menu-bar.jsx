@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import bindAll from 'lodash.bindall';
 import bowser from 'bowser';
 import React from 'react';
-
+import Renderer from 'scratch-render';
 import VM from 'scratch-vm';
 
 import Box from '../box/box.jsx';
@@ -73,6 +73,7 @@ import languageIcon from '../language-selector/language-icon.svg';
 import scratchLogo from './scratch-logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
+import {saveProject} from '../../reducers/BAC-project-state';
 
 const ariaMessages = defineMessages({
     language: {
@@ -183,6 +184,10 @@ class MenuBar extends React.Component {
     }
     handleClickSaveProject () {
         console.log("TODO: implement save project")
+        function localCallback(dataURI){
+        }
+        this.props.renderer.requestSnapshot(localCallback)
+        this.props.saveProject('')
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -782,7 +787,9 @@ MenuBar.propTypes = {
     showComingSoon: PropTypes.bool,
     userOwnsProject: PropTypes.bool,
     username: PropTypes.string,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    renderer: PropTypes.instanceOf(Renderer),
+    saveProject: PropTypes.func,
 };
 
 MenuBar.defaultProps = {
@@ -808,7 +815,8 @@ const mapStateToProps = (state, ownProps) => {
         username: user ? user.username : null,
         userOwnsProject: ownProps.authorUsername && user &&
             (ownProps.authorUsername === user.username),
-        vm: state.scratchGui.vm
+        vm: state.scratchGui.vm,
+        renderer:state.scratchGui.vm.renderer,
     };
 };
 
@@ -829,7 +837,8 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true))
+    onSeeCommunity: () => dispatch(setPlayer(true)),
+    saveProject: (projectURI) => dispatch(saveProject(projectURI))
 });
 
 export default compose(

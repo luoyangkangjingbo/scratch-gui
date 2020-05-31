@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {
+    defaultProjectId,
     LoadingStates,
     getIsCreatingNew,
     getIsFetchingWithId,
@@ -15,6 +16,7 @@ import {
     projectError,
     setProjectId
 } from '../reducers/project-state';
+
 import {
     activateTab,
     BLOCKS_TAB_INDEX
@@ -43,11 +45,20 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             // Either way, we now know what the initial projectId should be, so
             // set it in the redux store.
             if (
-                props.projectId !== '' &&
-                props.projectId !== null &&
-                typeof props.projectId !== 'undefined'
-            ) {
-                this.props.setProjectId(props.projectId.toString());
+                props.defaultURI !== '' &&
+                props.defaultURI !== null &&
+                typeof props.defaultURI !== 'undefined'
+            ){
+                console.log("TODO: implement fetch default project")
+                this.props.setProjectId(defaultProjectId.toString());
+            } else {
+                if (
+                    props.projectId !== '' &&
+                    props.projectId !== null &&
+                    typeof props.projectId !== 'undefined'
+                ) {
+                    this.props.setProjectId(props.projectId.toString());
+                }
             }
         }
         componentDidUpdate (prevProps) {
@@ -101,6 +112,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 setProjectId: setProjectIdProp,
                 /* eslint-enable no-unused-vars */
                 isFetchingWithId: isFetchingWithIdProp,
+                defaultURI,
                 ...componentProps
             } = this.props;
             return (
@@ -119,6 +131,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         isFetchingWithId: PropTypes.bool,
         isLoadingProject: PropTypes.bool,
         isShowingProject: PropTypes.bool,
+        defaultURI: PropTypes.string,
         loadingState: PropTypes.oneOf(LoadingStates),
         onActivateTab: PropTypes.func,
         onError: PropTypes.func,

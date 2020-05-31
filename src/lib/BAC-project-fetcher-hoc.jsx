@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import {
     getIsIdleProject,
     getIsFetchingProject,
-    setProject,
+    fetchProject,
     doneFetchProject
 } from '../reducers/BAC-project-state';
 
@@ -29,11 +29,11 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
                 'resetReader'
             ]);
             if (
-                props.defaultURI !== '' &&
-                props.defaultURI !== null &&
-                typeof props.defaultURI !== 'undefined'
+                props.prefixURI !== '' &&
+                props.prefixURI !== null &&
+                typeof props.prefixURI !== 'undefined'
             ) {
-                this.props.setProject(props.defaultURI)
+                this.props.fetchProject(props.prefixURI+props.suffixURI)
             }
         }
         componentWillMount () {
@@ -49,7 +49,7 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
         fetchProjectFromServer() {
             var myHeaders = new Headers()
             myHeaders.append('Content-Type', 'application/scratch.sb3')
-            fetch(this.props.projectURI, {
+            fetch(this.props.fullURI, {
               method: 'GET',
               headers: myHeaders,
             }).then(response => {
@@ -79,16 +79,19 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
         render() {
             const {
                 intl,
-                defaultURI,
-                projectURI,
+                prefixURI,
+                suffixURI,
+                fullURI,
                 isFetchingProject,
                 isIdleProject,
-                setProject,
+                fetchProject,
                 doneFetchProject,
                 ...componentProps
             } = this.props;
             return (
                 <WrappedComponent
+                    prefixURI={prefixURI}
+                    suffixURI={suffixURI}
                     {...componentProps}
                 />
             )
@@ -96,31 +99,28 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
     }
 
     BACProjectFetcherComponent.propTypes = {
-        defaultURI: PropTypes.string,
-        projectURI: PropTypes.string,
+        prefixURI: PropTypes.string,
+        suffixURI: PropTypes.string,
+        fullURI: PropTypes.string,
         isFetchingProject: PropTypes.bool,
         isIdleProject: PropTypes.bool,
-        setProject: PropTypes.func,
+        fetchProject: PropTypes.func,
         doneFetchProject: PropTypes.func,
         vm: PropTypes.shape({
             loadProject: PropTypes.func
         })
     }
 
-    BACProjectFetcherComponent.defaultProps = {
-        defaultURI: ''
-    }
-
     const mapStateToProps = state => ({
-        projectURI: state.scratchGui.BACProjectState.projectURI,
+        fullURI: state.scratchGui.BACProjectState.projectURI,
         isFetchingProject: getIsFetchingProject(state.scratchGui.BACProjectState.loadingState),
         isIdleProject: getIsIdleProject(state.scratchGui.BACProjectState.loadingState),
         vm: state.scratchGui.vm
     });
 
     const mapDispatchToProps = dispatch => ({
-        setProject: projectURI => dispatch(setProject(projectURI)),
-        doneFetchProject: () => dispatch(doneFetchProject())
+        fetchProject: projectURI => dispatch(fetchProject(projectURI)),
+        doneFetchProject: state => dispatch(doneFetchProject(state))
     });
 
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

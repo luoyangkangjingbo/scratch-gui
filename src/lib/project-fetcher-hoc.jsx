@@ -44,9 +44,9 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             // Either way, we now know what the initial projectId should be, so
             // set it in the redux store.
             if ((
-                props.defaultURI === '' ||
-                props.defaultURI === null ||
-                typeof props.defaultURI === 'undefined'
+                props.prefixURI === '' ||
+                props.prefixURI === null ||
+                typeof props.prefixURI === 'undefined'
             ) && (
                 props.projectId !== '' &&
                 props.projectId !== null &&
@@ -106,13 +106,15 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 setProjectId: setProjectIdProp,
                 /* eslint-enable no-unused-vars */
                 isFetchingWithId: isFetchingWithIdProp,
-                defaultURI,
+                prefixURI,
+                suffixURI,
                 ...componentProps
             } = this.props;
             return (
                 <WrappedComponent
                     fetchingProject={isFetchingWithIdProp}
-                    defaultURI={defaultURI}
+                    prefixURI={prefixURI}
+                    suffixURI={suffixURI}
                     {...componentProps}
                 />
             );
@@ -126,7 +128,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         isFetchingWithId: PropTypes.bool,
         isLoadingProject: PropTypes.bool,
         isShowingProject: PropTypes.bool,
-        defaultURI: PropTypes.string,
+        prefixURI:PropTypes.string,
+        suffixURI:PropTypes.string,
         loadingState: PropTypes.oneOf(LoadingStates),
         onActivateTab: PropTypes.func,
         onError: PropTypes.func,

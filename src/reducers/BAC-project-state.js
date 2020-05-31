@@ -1,12 +1,18 @@
 import keyMirror from 'keymirror';
 
-const SET_PROJECT = 'scratch-gui/BAC-project-state/SET_PROJECT';
+const FETCH_PROJECT = 'scratch-gui/BAC-project-state/FETCH_PROJECT';
 const DONE_FETCH_PROJECT = 'scratch-gui/BAC-project-state/DONE_FETCH_PROJECT';
+const APPLY_PROJECT = 'scratch-gui/BAC-project-state/APPLY_PROJECT';
+const DONE_APPLY_PROJECT = 'scratch-gui/BAC-project-state/DONE_APPLY_PROJECT';
+const SAVE_PROJECT = 'scratch-gui/BAC-project-state/SAVE_PROJECT';
+const DONE_SAVE_PROJECT = 'scratch-gui/BAC-project-state/DONE_SAVE_PROJECT';
 
 const LoadingState = keyMirror({
     NOT_LOADED: null,
     ERROR: null,
     FETCHING_PROJECT: null,
+    APPLYING_PROJECT: null,
+    SAVING_PROJECT: null,
     SHOWING_PROJECT: null,
 })
 
@@ -19,6 +25,12 @@ const getIsIdleProject = loadingState => (
 const getIsFetchingProject = loadingState => (
     loadingState === LoadingState.FETCHING_PROJECT
 )
+const getIsApplyingProject = loadingState => (
+    loadingState === LoadingState.APPLYING_PROJECT
+)
+const getIsSavingProject = loadingState => (
+    loadingState === LoadingState.SAVING_PROJECT
+)
 
 const initialState = {
     error: null,
@@ -30,7 +42,7 @@ const reducer = function (state, action) {
     if (typeof state === 'undefined') state = initialState;
 
     switch (action.type) {
-    case SET_PROJECT:
+    case FETCH_PROJECT:
         if (state.loadingState === LoadingState.NOT_LOADED ||
             state.loadingState === LoadingState.SHOWING_PROJECT) {
             return Object.assign({}, state, {
@@ -53,14 +65,29 @@ const reducer = function (state, action) {
     }
 };
 
-const setProject = (projectURI) =>({
-    type: SET_PROJECT,
+const fetchProject = projectURI =>({
+    type: FETCH_PROJECT,
     projectURI: projectURI
 });
-
-const doneFetchProject = () => ({
+const applyProject = projectURI => ({
+    type: APPLY_PROJECT,
+    projectURI: projectURI
+});
+const saveProject = projectURI => ({
+    type: SAVE_PROJECT,
+    projectURI: projectURI
+});
+const doneFetchProject = error => ({
     type: DONE_FETCH_PROJECT,
-    projectData: ''
+    error: error
+});
+const doneApplyProject = error => ({
+    type: DONE_APPLY_PROJECT,
+    error: error
+});
+const doneSaveProject = error => ({
+    type: DONE_SAVE_PROJECT,
+    error: error
 });
 
 export {
@@ -68,6 +95,12 @@ export {
     initialState as BACProjectStateInitialState,
     getIsIdleProject,
     getIsFetchingProject,
-    setProject,
-    doneFetchProject
+    getIsApplyingProject,
+    getIsSavingProject,
+    fetchProject,
+    applyProject,
+    saveProject,
+    doneFetchProject,
+    doneApplyProject,
+    doneSaveProject
 };

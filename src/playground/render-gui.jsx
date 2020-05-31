@@ -81,7 +81,7 @@ export default appTarget => {
                 canSave={false}
                 onClickLogo={onClickLogo}
                 isPC
-                defaultURI=""
+                defaultURI="http://106.15.127.56:8881/scratch/projectId?get=123456452425245gfsgsgsfgsgfgsfg"
             />,
         appTarget);
 };

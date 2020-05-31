@@ -6,7 +6,6 @@ import {connect} from 'react-redux';
 
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {
-    defaultProjectId,
     LoadingStates,
     getIsCreatingNew,
     getIsFetchingWithId,
@@ -44,21 +43,16 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             // or it may be set by an even higher HOC, and passed to us.
             // Either way, we now know what the initial projectId should be, so
             // set it in the redux store.
-            if (
-                props.defaultURI !== '' &&
-                props.defaultURI !== null &&
-                typeof props.defaultURI !== 'undefined'
-            ){
-                console.log("TODO: implement fetch default project")
-                this.props.setProjectId(defaultProjectId.toString());
-            } else {
-                if (
-                    props.projectId !== '' &&
-                    props.projectId !== null &&
-                    typeof props.projectId !== 'undefined'
-                ) {
-                    this.props.setProjectId(props.projectId.toString());
-                }
+            if ((
+                props.defaultURI === '' ||
+                props.defaultURI === null ||
+                typeof props.defaultURI === 'undefined'
+            ) && (
+                props.projectId !== '' &&
+                props.projectId !== null &&
+                typeof props.projectId !== 'undefined'
+            )) {
+                this.props.setProjectId(props.projectId.toString());
             }
         }
         componentDidUpdate (prevProps) {
@@ -118,6 +112,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             return (
                 <WrappedComponent
                     fetchingProject={isFetchingWithIdProp}
+                    defaultURI={defaultURI}
                     {...componentProps}
                 />
             );

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import bindAll from 'lodash.bindall';
 import bowser from 'bowser';
 import React from 'react';
-import Renderer from 'scratch-render';
 import VM from 'scratch-vm';
 
 import Box from '../box/box.jsx';
@@ -85,6 +84,11 @@ const ariaMessages = defineMessages({
         id: 'gui.menuBar.tutorialsLibrary',
         defaultMessage: 'Tutorials',
         description: 'accessibility text for the tutorials button'
+    },
+    projectFilename: {
+        id: 'gui.gui.projectTitlePlaceholder',
+        description: 'Placeholder for project title when blank',
+        defaultMessage: 'Project title here'
     }
 });
 
@@ -183,11 +187,20 @@ class MenuBar extends React.Component {
         this.props.onRequestCloseFile();
     }
     handleClickSaveProject () {
-        console.log("TODO: implement save project")
-        function localCallback(dataURI){
+        var defaultProjectZHFilename = "请输入作品名称:"
+        var defaultProjectENFilename = "Please Input Project Name:"
+        // check if user input project filename
+        if ((this.props.projectFilename === defaultProjectZHFilename) ||
+            (this.props.projectFilename === defaultProjectENFilename)) {
+            this.props.confirmReadyToReplaceProject(
+                this.props.intl.formatMessage(ariaMessages.projectFilename)
+            );
         }
-        this.props.renderer.requestSnapshot(localCallback)
-        this.props.saveProject('')
+
+        if ((this.props.projectFilename !== defaultProjectZHFilename) &&
+            (this.props.projectFilename !== defaultProjectENFilename)) {
+            this.props.saveProject('')
+        }
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -788,8 +801,8 @@ MenuBar.propTypes = {
     userOwnsProject: PropTypes.bool,
     username: PropTypes.string,
     vm: PropTypes.instanceOf(VM).isRequired,
-    renderer: PropTypes.instanceOf(Renderer),
     saveProject: PropTypes.func,
+    projectFilename: PropTypes.string,
 };
 
 MenuBar.defaultProps = {
@@ -816,7 +829,7 @@ const mapStateToProps = (state, ownProps) => {
         userOwnsProject: ownProps.authorUsername && user &&
             (ownProps.authorUsername === user.username),
         vm: state.scratchGui.vm,
-        renderer:state.scratchGui.vm.renderer,
+        projectFilename: state.scratchGui.projectTitle,
     };
 };
 

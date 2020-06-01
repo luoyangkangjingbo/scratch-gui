@@ -82,7 +82,7 @@ export default appTarget => {
                 onClickLogo={onClickLogo}
                 isPC
                 suffixURI="?get=123456452425245gfsgsgsfgsgfgsfg"
-                prefixURI="http://106.15.127.56:8881/scratch/projectId"
+                prefixURI="http://106.15.127.56:8881/scratch/projectAsset"
             />,
         appTarget);
 };

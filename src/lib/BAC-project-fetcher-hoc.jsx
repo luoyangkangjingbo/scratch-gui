@@ -6,8 +6,6 @@ import {connect} from 'react-redux';
 
 import {
     getIsIdleProject,
-    getIsFetchingJSON,
-    getIsFetchingICON,
     getIsFetchingProject,
     fetchProject,
     doneFetchProject
@@ -26,116 +24,103 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
         constructor(props) {
             super(props);
             bindAll(this, [
-                'fetchProjectJSONFromServer',
-                'fetchProjectIconFromServer',
+                'projectJsonProcess',
+                'projectImageProcess',
+                'projectDataProcess',
+                'fetchGET',
                 'fetchProjectFromServer',
-                'onLoad',
             ]);
+            this.error = false;
             if (
                 props.prefixURI !== '' &&
                 props.prefixURI !== null &&
                 typeof props.prefixURI !== 'undefined'
             ) {
                 // only when project is Idle
-                if (props.isIdleProject) {
-                    this.props.fetchProject(props.prefixURI+props.suffixURI)
-                }
+                this.props.fetchProject(false, false, true, props.prefixURI+props.suffixURI)
             }
         }
-        componentWillMount () {
-            this.reader = new FileReader()
-            this.reader.onload = this.onLoad
-        }
+
         componentDidUpdate(prevProps) {
-            if (this.props.isFetchingJSON && !prevProps.isFetchingJSON) {
-                this.fetchProjectJSONFromServer()
-            }
-            if (this.props.isFetchingICON && !prevProps.isFetchingICON) {
-                this.fetchProjectIconFromServer()
-            }
-            if (this.props.isFetchingProject && !prevProps.isFetchingProject && this.reader) {
+            if (this.props.isFetchingProject && !prevProps.isFetchingProject) {
                 this.fetchProjectFromServer()
             }
         }
-        fetchProjectJSONFromServer() {
-            // fetch project information
+
+        projectJsonProcess(content) {
+            return true
+        }
+
+        projectImageProcess(content) {
+            return true
+        }
+
+        projectDataProcess(content) {
+            this.props.vm.loadProject(content)
+            .then(() => {
+                return true
+            }).catch(error => {
+                return false
+            });
+        }
+
+        fetchGET(params){
+            var retResult = ''
             var myHeaders = new Headers()
-            myHeaders.append('Content-Type', 'application/json')
-            fetch(this.props.fullURI, {
+            myHeaders.append('Content-Type', params['Content-Type'])
+            fetch(params['getURI'], {
               method: 'GET',
               headers: myHeaders,
             }).then(response => {
                 if (response.status === 200) {
-                    response.blob().then(myBlob => {
-                        this.reader.readAsArrayBuffer(myBlob)
-                    }).catch(error => {
-                        // read blob into arrayBuffer fail
-                        this.props.doneFetchProject(false)
-                    })
+                    var contentType = response.headers.get('Content-Type')
+                    if (contentType === 'application/x.scratch.sb3') {
+                        response.arrayBuffer().then(content => {
+                            // load sb3 into vm
+                            this.error = !this.projectDataProcess(content)
+                        }).catch(error => {
+                            this.error = true
+                        })
+                    } else if (contentType === 'application/json') {
+                        response.json().then(content => {
+                            this.error = !this.projectJsonProcess(content)
+                        }).catch(error => {
+                            this.error = true
+                        })
+                    } else if (contentType === 'image/png') {
+                        response.blob().then(content => {
+                            this.error = !this.projectImageProcess(content)
+                        }).catch(error => {
+                            this.error = true
+                        })
+                    } else {
+                        this.error = true
+                    }
                 } else {
-                    // fetch project from server error
-                    this.props.doneFetchProject(false)
+                    this.error = true
                 }
             }).catch(error => {
-                // fetch project from server net error
-                this.props.doneFetchProject(false)
+                this.error = true
             })
         }
-        fetchProjectIconFromServer() {
-            // fetch project icon
-            var myHeaders = new Headers()
-            myHeaders.append('Content-Type', 'application/image')
-            fetch(this.props.fullURI, {
-              method: 'GET',
-              headers: myHeaders,
-            }).then(response => {
-                if (response.status === 200) {
-                    response.blob().then(myBlob => {
-                        this.reader.readAsArrayBuffer(myBlob)
-                    }).catch(error => {
-                        // read blob into arrayBuffer fail
-                        this.props.doneFetchProject(false)
-                    })
-                } else {
-                    // fetch project from server error
-                    this.props.doneFetchProject(false)
-                }
-            }).catch(error => {
-                // fetch project from server net error
-                this.props.doneFetchProject(false)
-            })
-        }
+
         fetchProjectFromServer() {
-            var myHeaders = new Headers()
-            myHeaders.append('Content-Type', 'application/x.scratch.sb3')
-            fetch(this.props.fullURI, {
-              method: 'GET',
-              headers: myHeaders,
-            }).then(response => {
-                if (response.status === 200) {
-                    response.blob().then(myBlob => {
-                        this.reader.readAsArrayBuffer(myBlob)
-                    }).catch(error => {
-                        // read blob into arrayBuffer fail
-                        this.props.doneFetchProject(false)
-                    })
-                } else {
-                    // fetch project from server error
-                    this.props.doneFetchProject(false)
+            if (this.props.needFetchProjectJson) {
+                this.fetchGET({'Content-Type':'application/json', 'getURI':this.props.prefixURI})
+                if (this.error) {
                 }
-            }).catch(error => {
-                // fetch project from server net error
-                this.props.doneFetchProject(false)
-            })
-        }
-        onLoad() {
-            this.props.vm.loadProject(this.reader.result)
-                .then(() => {
-                    this.props.doneFetchProject(true);
-                }).catch(error => {
-                    // load file into scratch vm fail
-                    this.props.doneFetchProject(false);
-                });
+            }
+            if (this.props.needFetchProjectImage) {
+                this.fetchGET({'Content-Type':'image/png', 'getURI':this.props.prefixURI})
+                if (this.error) {
+                }
+            }
+            if (this.props.needFetchProjectData) {
+                this.fetchGET({'Content-Type':'application/x.scratch.sb3', 'getURI':this.props.prefixURI})
+                if (this.error) {
+                }
+            }
+            this.props.doneFetchProject()
         }
 
         render() {
@@ -143,9 +128,9 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
                 intl,
                 prefixURI,
                 suffixURI,
-                fullURI,
-                isFetchingJSON,
-                isFetchingICON,
+                needFetchProjectJson,
+                needFetchProjectImage,
+                needFetchProjectData,
                 isFetchingProject,
                 isIdleProject,
                 fetchProject,
@@ -165,9 +150,9 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
     BACProjectFetcherComponent.propTypes = {
         prefixURI: PropTypes.string,
         suffixURI: PropTypes.string,
-        fullURI: PropTypes.string,
-        isFetchingJSON: PropTypes.bool,
-        isFetchingICON: PropTypes.bool,
+        needFetchProjectJson: PropTypes.bool,
+        needFetchProjectImage: PropTypes.bool,
+        needFetchProjectData: PropTypes.bool,
         isFetchingProject: PropTypes.bool,
         isIdleProject: PropTypes.bool,
         fetchProject: PropTypes.func,
@@ -178,16 +163,16 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
     }
 
     const mapStateToProps = state => ({
-        fullURI: state.scratchGui.BACProjectState.projectURI,
-        isFetchingJSON: getIsFetchingJSON(state.scratchGui.BACProjectState.loadingState),
-        isFetchingICON: getIsFetchingICON(state.scratchGui.BACProjectState.loadingState),
+        needFetchProjectJson: state.scratchGui.BACProjectState.projectJson,
+        needFetchProjectImage: state.scratchGui.BACProjectState.projectImage,
+        needFetchProjectData: state.scratchGui.BACProjectState.projectData,
         isFetchingProject: getIsFetchingProject(state.scratchGui.BACProjectState.loadingState),
         isIdleProject: getIsIdleProject(state.scratchGui.BACProjectState.loadingState),
         vm: state.scratchGui.vm
     });
 
     const mapDispatchToProps = dispatch => ({
-        fetchProject: projectURI => dispatch(fetchProject(projectURI)),
+        fetchProject: (projectJson, projectImage, projectData, projectURI) => dispatch(fetchProject(projectJson, projectImage, projectData, projectURI)),
         doneFetchProject: state => dispatch(doneFetchProject(state))
     });
 

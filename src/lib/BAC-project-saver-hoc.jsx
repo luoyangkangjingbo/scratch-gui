@@ -6,20 +6,38 @@ import bindAll from 'lodash.bindall';
 import {connect} from 'react-redux';
 import Renderer from 'scratch-render';
 import {
+    getIsIdleProject,
     getIsSavingProject,
+    getIsCreatingProject,
+    getIsFetchingProject,
     saveProject,
     doneSaveProject
 } from '../reducers/BAC-project-state';
+
+function fetchPUTToServer(params) {
+    var myHeaders = new Headers()
+    myHeaders.append('Content-Type', params['Content-Type'])
+    fetch(params['putURI'], {
+      method: 'PUT',
+      body: params['body'],
+      headers: myHeaders,
+    }).then(response => {
+        if (response.status === 200) {
+        }
+    }).catch(error => {})
+}
 
 const BACProjectSaverHOC = function (WrappedComponent) {
     class BACProjectSaverComponent extends React.Component {
         constructor(props) {
             super(props)
             this.projectData = null
+            this.jsonContent = null
             bindAll(this, [
                 'projectJsonProcess',
                 'projectImageProcess',
                 'projectDataProcess',
+                'fetchGETProjectId',
                 'fetchPUT',
                 'saveProjectToServer'
             ]);
@@ -27,6 +45,19 @@ const BACProjectSaverHOC = function (WrappedComponent) {
         }
 
         componentDidUpdate(prevProps) {
+            // they all need error check
+            // update json after new project
+            if (this.props.isIdleProject && prevProps.isCreatingProject) {
+                this.jsonContent = null
+            }
+            // update json after fetch project
+            if (this.props.isIdleProject && prevProps.isFetchingProject) {
+                this.jsonContent = this.props.projectJsonContent
+            }
+            // update json after save project
+            if (this.props.isIdleProject && prevProps.isSavingProject) {
+                this.jsonContent = this.props.projectJsonContent
+            }
             if (this.props.isSavingProject && !prevProps.isSavingProject) {
                 this.saveProjectToServer()
             }
@@ -42,6 +73,27 @@ const BACProjectSaverHOC = function (WrappedComponent) {
 
         projectDataProcess(content) {
             return true
+        }
+
+        fetchGETProjectId(projectId){
+            var myHeaders = new Headers()
+            myHeaders.append('Content-Type', 'application/json')
+            fetch(this.props.prefixURI+"?Id="+projectId, {
+              method: 'GET',
+              headers: myHeaders,
+            }).then(response => {
+                if (response.status === 200) {
+                    var contentType = response.headers.get('Content-Type')
+                    if (contentType === 'application/json') {
+                        response.json().then(content => {
+                            if (projectId === content.get('projectId','')) {
+                                return true
+                            }
+                        }).catch(error => {})
+                    }
+                }
+            }).catch(error => {})
+            return false
         }
 
         fetchPUT(params) {
@@ -84,46 +136,58 @@ const BACProjectSaverHOC = function (WrappedComponent) {
         }
 
         saveProjectToServer() {
-            if (this.props.needSaveProjectJson) {
-                var projectBody = {
-                    'filename': '',
-                    'timeStamp': (new Date()).getTime().toString(),
-                    'projectId': sha256((new Date()).getTime().toString() + Math.random().toString())
-                }
-                this.fetchPUT({'Content-Type':'application/json', 'putURI':this.props.prefixURI, 'body':projectBody})
-                if (this.error) {}
-            }
-            if (this.props.needSaveProjectImage) {
-                function localCallback(dataURI) {
-                    this.fetchPUT({'Content-Type':'image/png', 'putURI':this.props.prefixURI, 'body':dataURI})
-                    if (this.error) {}
-                }
-                this.props.renderer.requestSnapshot(localCallback)
-            }
-            if (this.props.needSaveProjectData) {
+            if (this.jsonContent && this.jsonContent['projectTitle'] === this.props.projectTitle) {
                 this.props.saveProjectSb3().then(content => {
-                    this.fetchPUT({'Content-Type':'application/x.scratch.sb3', 'putURI':this.props.prefixURI, 'body':content})
+                    this.fetchPUT({'Content-Type':'application/x.scratch.sb3', 'putURI':this.props.prefixURI+"?Id="+this.jsonContent['projectId'], 'body':content})
                 }).catch(error => {
                     this.error = true
                 })
-                if (this.error) {}
+                this.props.doneSaveProject(true, this.jsonContent)
+            } else {
+                var applyProjectId = sha256((new Date()).getTime().toString() + Math.random().toString())
+                if (this.fetchGETProjectId(applyProjectId)) {
+                    console.log("Invalid Apply ProjectId")
+                    this.error = true
+                } else {
+                    // put project json
+                    var projectInfo = {
+                        'projectTitle': this.props.projectTitle,
+                        'timeStamp': (new Date()).getTime().toString(),
+                        'projectId': applyProjectId
+                    }
+                    this.fetchPUT({'Content-Type':'application/json', 'putURI':this.props.prefixURI+"?Id="+applyProjectId, 'body':JSON.stringify(projectInfo)})
+                    // put project png
+                    var localPrefixURI=this.props.prefixURI
+                    function localCallback(dataURI) {
+                        fetchPUTToServer({'Content-Type':'text/plain', 'putURI':localPrefixURI+"?Id="+applyProjectId, 'body':dataURI.replace("data:image/png;base64,", '')})
+                    }
+                    this.props.renderer.requestSnapshot(localCallback)
+                    // put project data
+                    this.props.saveProjectSb3().then(content => {
+                        this.fetchPUT({'Content-Type':'application/x.scratch.sb3', 'putURI':this.props.prefixURI+"?Id="+applyProjectId, 'body':content})
+                    }).catch(error => {
+                        this.error = true
+                    })
+                    this.props.doneSaveProject(true, projectInfo)
+                }
             }
-            this.props.doneSaveProject(true)
         }
 
         render() {
             const {
                 prefixURI,
                 suffixURI,
-                needSaveProjectJson,
-                needSaveProjectImage,
-                needSaveProjectData,
+                isIdleProject,
+                isCreatingProject,
+                isFetchingProject,
                 isSavingProject,
+                projectJsonContent,
                 saveJSON,
                 saveICON,
                 saveProject,
                 doneSaveProject,
                 saveProjectSb3,
+                projectTitle,
                 ...componentProps
             } = this.props;
             return (
@@ -137,32 +201,36 @@ const BACProjectSaverHOC = function (WrappedComponent) {
     BACProjectSaverComponent.propTypes = {
         prefixURI: PropTypes.string,
         suffixURI: PropTypes.string,
-        needSaveProjectJson: PropTypes.bool,
-        needSaveProjectImage: PropTypes.bool,
-        needSaveProjectData: PropTypes.bool,
+        isIdleProject: PropTypes.bool,
+        isCreatingProject: PropTypes.bool,
+        isFetchingProject: PropTypes.bool,
         isSavingProject: PropTypes.bool,
         saveJSON: PropTypes.func,
         saveICON: PropTypes.func,
         saveProject: PropTypes.func,
         doneSaveProject: PropTypes.func,
+        projectJsonContent: PropTypes.object,
         vm: PropTypes.shape({
             loadProject: PropTypes.func
         }),
         saveProjectSb3: PropTypes.func,
-        renderer: PropTypes.instanceOf(Renderer)
+        renderer: PropTypes.instanceOf(Renderer),
+        projectTitle: PropTypes.string,
     }
     const mapStateToProps = state => ({
-        needSaveProjectJson: state.scratchGui.BACProjectState.projectJson,
-        needSaveProjectImage: state.scratchGui.BACProjectState.projectImage,
-        needSaveProjectData: state.scratchGui.BACProjectState.projectData,
+        isIdleProject: getIsIdleProject(state.scratchGui.BACProjectState.loadingState),
+        isCreatingProject: getIsCreatingProject(state.scratchGui.BACProjectState.loadingState),
+        isFetchingProject: getIsFetchingProject(state.scratchGui.BACProjectState.loadingState),
         isSavingProject: getIsSavingProject(state.scratchGui.BACProjectState.loadingState),
+        projectJsonContent: state.scratchGui.BACProjectState.projectJsonContent,
         vm: state.scratchGui.vm,
         saveProjectSb3: state.scratchGui.vm.saveProjectSb3.bind(state.scratchGui.vm),
-        renderer:state.scratchGui.vm.renderer
+        renderer:state.scratchGui.vm.renderer,
+        projectTitle: state.scratchGui.projectTitle,
     });
     const mapDispatchToProps = dispatch => ({
-        saveProject: (projectJson, projectImage, projectData, projectURI) => dispatch(saveProject(projectJson, projectImage, projectData, projectURI)),
-        doneSaveProject: state => dispatch(doneSaveProject(state)),
+        saveProject: () => dispatch(saveProject()),
+        doneSaveProject: (state, projectJsonContent) => dispatch(doneSaveProject(state, projectJsonContent)),
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

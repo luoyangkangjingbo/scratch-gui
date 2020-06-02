@@ -72,7 +72,7 @@ import languageIcon from '../language-selector/language-icon.svg';
 import scratchLogo from './scratch-logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
-import {saveProject} from '../../reducers/BAC-project-state';
+import {saveProject, createProject} from '../../reducers/BAC-project-state';
 
 const ariaMessages = defineMessages({
     language: {
@@ -183,6 +183,7 @@ class MenuBar extends React.Component {
         this.props.onRequestCloseFile();
         if (readyToReplaceProject) {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
+            this.props.createProject();
         }
         this.props.onRequestCloseFile();
     }
@@ -196,10 +197,9 @@ class MenuBar extends React.Component {
                 this.props.intl.formatMessage(ariaMessages.projectFilename)
             );
         }
-
         if ((this.props.projectFilename !== defaultProjectZHFilename) &&
             (this.props.projectFilename !== defaultProjectENFilename)) {
-            this.props.saveProject('')
+            this.props.saveProject()
         }
     }
     handleClickRemix () {
@@ -802,6 +802,7 @@ MenuBar.propTypes = {
     username: PropTypes.string,
     vm: PropTypes.instanceOf(VM).isRequired,
     saveProject: PropTypes.func,
+    createProject: PropTypes.func,
     projectFilename: PropTypes.string,
 };
 
@@ -851,7 +852,8 @@ const mapDispatchToProps = dispatch => ({
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
     onSeeCommunity: () => dispatch(setPlayer(true)),
-    saveProject: (projectURI) => dispatch(saveProject(projectURI))
+    saveProject: () => dispatch(saveProject()),
+    createProject: () => dispatch(createProject())
 });
 
 export default compose(

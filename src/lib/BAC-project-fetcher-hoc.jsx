@@ -6,9 +6,11 @@ import {connect} from 'react-redux';
 
 import {
     getIsIdleProject,
+    getIsCreatingProject,
     getIsFetchingProject,
     fetchProject,
-    doneFetchProject
+    doneFetchProject,
+    doneCreateProject
 } from '../reducers/BAC-project-state';
 
 const messages = defineMessages({
@@ -30,6 +32,7 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
                 'fetchGET',
                 'fetchProjectFromServer',
             ]);
+            this.jsonContent = null;
             this.error = false;
             if (
                 props.prefixURI !== '' &&
@@ -37,17 +40,21 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
                 typeof props.prefixURI !== 'undefined'
             ) {
                 // only when project is Idle
-                this.props.fetchProject(false, false, true, props.prefixURI+props.suffixURI)
+                this.props.fetchProject(true, true, true, props.prefixURI+props.suffixURI)
             }
         }
 
         componentDidUpdate(prevProps) {
+            if (this.props.isCreatingProject && !prevProps.isCreatingProject) {
+                this.props.doneCreateProject()
+            }
             if (this.props.isFetchingProject && !prevProps.isFetchingProject) {
                 this.fetchProjectFromServer()
             }
         }
 
         projectJsonProcess(content) {
+            this.jsonContent = content
             return true
         }
 
@@ -106,21 +113,22 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
 
         fetchProjectFromServer() {
             if (this.props.needFetchProjectJson) {
-                this.fetchGET({'Content-Type':'application/json', 'getURI':this.props.prefixURI})
+                this.fetchGET({'Content-Type':'application/json', 'getURI':this.props.projectURI})
                 if (this.error) {
                 }
             }
             if (this.props.needFetchProjectImage) {
-                this.fetchGET({'Content-Type':'image/png', 'getURI':this.props.prefixURI})
+                this.fetchGET({'Content-Type':'image/png', 'getURI':this.props.projectURI})
                 if (this.error) {
                 }
             }
             if (this.props.needFetchProjectData) {
-                this.fetchGET({'Content-Type':'application/x.scratch.sb3', 'getURI':this.props.prefixURI})
+                this.fetchGET({'Content-Type':'application/x.scratch.sb3', 'getURI':this.props.projectURI})
                 if (this.error) {
                 }
             }
-            this.props.doneFetchProject()
+
+            this.props.doneFetchProject(true, this.jsonContent)
         }
 
         render() {
@@ -128,6 +136,7 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
                 intl,
                 prefixURI,
                 suffixURI,
+                projectURI,
                 needFetchProjectJson,
                 needFetchProjectImage,
                 needFetchProjectData,
@@ -135,6 +144,7 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
                 isIdleProject,
                 fetchProject,
                 doneFetchProject,
+                doneCreateProject,
                 ...componentProps
             } = this.props;
             return (
@@ -153,10 +163,13 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
         needFetchProjectJson: PropTypes.bool,
         needFetchProjectImage: PropTypes.bool,
         needFetchProjectData: PropTypes.bool,
+        projectURI: PropTypes.string,
+        isCreatingProject: PropTypes.bool,
         isFetchingProject: PropTypes.bool,
         isIdleProject: PropTypes.bool,
         fetchProject: PropTypes.func,
         doneFetchProject: PropTypes.func,
+        doneCreateProject: PropTypes.func,
         vm: PropTypes.shape({
             loadProject: PropTypes.func
         })
@@ -166,6 +179,8 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
         needFetchProjectJson: state.scratchGui.BACProjectState.projectJson,
         needFetchProjectImage: state.scratchGui.BACProjectState.projectImage,
         needFetchProjectData: state.scratchGui.BACProjectState.projectData,
+        projectURI: state.scratchGui.BACProjectState.projectURI,
+        isCreatingProject: getIsCreatingProject(state.scratchGui.BACProjectState.loadingState),
         isFetchingProject: getIsFetchingProject(state.scratchGui.BACProjectState.loadingState),
         isIdleProject: getIsIdleProject(state.scratchGui.BACProjectState.loadingState),
         vm: state.scratchGui.vm
@@ -173,7 +188,8 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
 
     const mapDispatchToProps = dispatch => ({
         fetchProject: (projectJson, projectImage, projectData, projectURI) => dispatch(fetchProject(projectJson, projectImage, projectData, projectURI)),
-        doneFetchProject: state => dispatch(doneFetchProject(state))
+        doneFetchProject: (state, projectJsonContent) => dispatch(doneFetchProject(state,projectJsonContent)),
+        doneCreateProject: () => dispatch(doneCreateProject())
     });
 
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

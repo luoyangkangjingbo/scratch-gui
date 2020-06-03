@@ -159,7 +159,8 @@ const BACProjectSaverHOC = function (WrappedComponent) {
                     // put project png
                     var localPrefixURI=this.props.prefixURI
                     function localCallback(dataURI) {
-                        fetchPUTToServer({'Content-Type':'text/plain', 'putURI':localPrefixURI+"?Id="+applyProjectId, 'body':dataURI.replace("data:image/png;base64,", '')})
+                        // fetchPUTToServer({'Content-Type':'text/plain', 'putURI':localPrefixURI+"?Id="+applyProjectId, 'body':dataURI.replace("data:image/png;base64,", '')})
+                        fetchPUTToServer({'Content-Type':'text/plain', 'putURI':localPrefixURI+"?Id="+applyProjectId, 'body':dataURI})
                     }
                     this.props.renderer.requestSnapshot(localCallback)
                     // put project data

@@ -81,8 +81,10 @@ export default appTarget => {
                 canSave={false}
                 onClickLogo={onClickLogo}
                 isPC
-                suffixURI="?Id=a6c2ebffcecb2c3df38058884b8a6cfa28c9136d8e661eea2747a2b7e4ff17ca"
-                prefixURI="http://106.15.127.56:8881/BilinearCommon/projectAsset"
+                // globalBACRenderWidth={480}
+                // globalBACRenderHeight={320}
+                suffixURI={`?target=scratch&action=part&id=1234567890`}
+                prefixURI="http://106.15.127.56:8888/BACUser00001/works"
             />,
         appTarget);
 };

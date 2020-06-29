@@ -43,8 +43,8 @@ const resolveStageSize = (stageSizeMode, isFullSize) => {
  */
 const getStageDimensions = (stageSize, isFullScreen) => {
     const stageDimensions = {
-        heightDefault: layout.standardStageHeight,
-        widthDefault: layout.standardStageWidth,
+        heightDefault:  window.globalBACRenderHeight && window.globalBACRenderHeighti != 0 ? window.globalBACRenderHeight : layout.standardStageHeight,
+        widthDefault: window.globalBACRenderWidth && window.globalBACRenderWidth != 0 ? window.globalBACRenderWidth : layout.standardStageWidth,
         height: 0,
         width: 0,
         scale: 0

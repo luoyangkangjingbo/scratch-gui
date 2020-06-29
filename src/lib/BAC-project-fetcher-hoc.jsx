@@ -34,14 +34,28 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
             ]);
             this.jsonContent = null;
             this.error = false;
-            if (
-                props.prefixURI !== '' &&
-                props.prefixURI !== null &&
-                typeof props.prefixURI !== 'undefined'
-            ) {
-                // only when project is Idle
-                this.props.fetchProject(true, true, true, props.prefixURI+props.suffixURI)
+            if (props.userSnapShotData) {
+                props.vm.loadProject(props.userSnapShotData)
+                .then(() => {
+                    props.vm.start()
+                    if (props.userSnapShotCallback) {
+                        props.vm.renderer.requestSnapshot(props.userSnapShotCallback)
+                    }
+                    return true
+                }).catch(error => {
+                    return false
+                });
+            } else if (props.prefixURI && props.suffixURI) {
+                this.props.fetchProject(false, false, true, props.prefixURI+props.suffixURI)
             }
+            // if (
+            //     props.prefixURI !== '' &&
+            //     props.prefixURI !== null &&
+            //     typeof props.prefixURI !== 'undefined'
+            // ) {
+            //     // only when project is Idle
+            //     this.props.fetchProject(false, false, true, props.prefixURI+props.suffixURI)
+            // }
         }
 
         componentDidUpdate(prevProps) {

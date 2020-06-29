@@ -41,7 +41,13 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 
+
 class GUI extends React.Component {
+    constructor(props) {
+        super(props)
+        window.globalBACRenderWidth  = props.globalBACRenderWidth
+        window.globalBACRenderHeight = props.globalBACRenderHeight
+    }
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
@@ -81,6 +87,8 @@ class GUI extends React.Component {
             fetchingProject,
             isLoading,
             loadingStateVisible,
+            globalBACRenderWidth,
+            globalBACRenderHeight,
             ...componentProps
         } = this.props;
         return (

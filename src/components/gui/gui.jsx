@@ -87,7 +87,7 @@ const GUIComponent = props => {
         isRtl,
         isShared,
         loading,
-        logo,
+        BACLogo,
         renderLogin,
         onClickAccountNav,
         onCloseAccountNav,
@@ -215,7 +215,7 @@ const GUIComponent = props => {
                     className={styles.menuBarPosition}
                     enableCommunity={enableCommunity}
                     isShared={isShared}
-                    logo={logo}
+                    BACLogo={BACLogo}
                     renderLogin={renderLogin}
                     showComingSoon={showComingSoon}
                     onClickAccountNav={onClickAccountNav}
@@ -384,7 +384,7 @@ GUIComponent.propTypes = {
     isRtl: PropTypes.bool,
     isShared: PropTypes.bool,
     loading: PropTypes.bool,
-    logo: PropTypes.string,
+    BACLogo: PropTypes.string,
     onActivateCostumesTab: PropTypes.func,
     onActivateSoundsTab: PropTypes.func,
     onActivateTab: PropTypes.func,

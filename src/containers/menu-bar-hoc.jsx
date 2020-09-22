@@ -10,7 +10,8 @@ const MenuBarHOC = function (WrappedComponent) {
 
             bindAll(this, [
                 'confirmReadyToReplaceProject',
-                'shouldSaveBeforeTransition'
+                'shouldSaveBeforeTransition',
+                'hasChangedBeforeSave',
             ]);
         }
         confirmReadyToReplaceProject (message) {
@@ -23,6 +24,9 @@ const MenuBarHOC = function (WrappedComponent) {
         shouldSaveBeforeTransition () {
             return (this.props.canSave && this.props.projectChanged);
         }
+        hasChangedBeforeSave() {
+            return this.props.projectChanged && !this.props.canCreateNew
+        }
         render () {
             const {
                 /* eslint-disable no-unused-vars */
@@ -33,6 +37,7 @@ const MenuBarHOC = function (WrappedComponent) {
             return (<WrappedComponent
                 confirmReadyToReplaceProject={this.confirmReadyToReplaceProject}
                 shouldSaveBeforeTransition={this.shouldSaveBeforeTransition}
+                hasChangedBeforeSave={this.hasChangedBeforeSave}
                 {...props}
             />);
         }

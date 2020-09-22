@@ -74,6 +74,12 @@ import scratchLogo from './scratch-logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
 
+import {
+    updateProject as BACUpdateProject,
+    uploadProject as BACUploadProject,
+    setProjectId  as setBACProjectId,
+} from '../../reducers/BAC-project-state';
+
 const ariaMessages = defineMessages({
     language: {
         id: 'gui.menuBar.LanguageSelector',
@@ -155,7 +161,9 @@ class MenuBar extends React.Component {
             'handleLanguageMouseUp',
             'handleRestoreOption',
             'getSaveToComputerHandler',
-            'restoreOptionMessage'
+            'restoreOptionMessage',
+            'BACHandleClickSave',
+            'BACHandleClickSaveAs',
         ]);
     }
     componentDidMount () {
@@ -176,6 +184,7 @@ class MenuBar extends React.Component {
         this.props.onRequestCloseFile();
         if (readyToReplaceProject) {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
+            this.props.onSetBACProjectId(null)
         }
         this.props.onRequestCloseFile();
     }
@@ -269,6 +278,18 @@ class MenuBar extends React.Component {
         }
         }
     }
+    BACHandleClickSave() {
+        if (this.props.BACProjectId) {
+            if (this.props.hasChangedBeforeSave()) {
+                this.props.onBACUpdateProject()
+            }
+        } else {
+            this.props.onBACUploadProject()
+        }
+    }
+    BACHandleClickSaveAs() {
+        this.props.onBACUploadProject()
+    }
     render () {
         const saveNowMessage = (
             <FormattedMessage
@@ -295,7 +316,21 @@ class MenuBar extends React.Component {
             <FormattedMessage
                 defaultMessage="New"
                 description="Menu bar item for creating a new project"
-                id="gui.menuBar.new"
+                id="gui.menuBar.BACNew"
+            />
+        );
+        const BACSaveProjectMessage = (
+            <FormattedMessage
+                defaultMessage="Save"
+                description="Menu bar item for save a project"
+                id="gui.menuBar.BACSave"
+            />
+        );
+        const BACSaveAsProjectMessage = (
+            <FormattedMessage
+                defaultMessage="Save As"
+                description="Menu bar item for save as project"
+                id="gui.menuBar.BACSaveAs"
             />
         );
         const remixButton = (
@@ -380,6 +415,18 @@ class MenuBar extends React.Component {
                                             onClick={this.handleClickNew}
                                         >
                                             {newProjectMessage}
+                                        </MenuItem>
+                                        <MenuItem
+                                            isRtl={this.props.isRtl}
+                                            onClick={this.BACHandleClickSave}
+                                        >
+                                            {BACSaveProjectMessage}
+                                        </MenuItem>
+                                        <MenuItem
+                                            isRtl={this.props.isRtl}
+                                            onClick={this.BACHandleClickSaveAs}
+                                        >
+                                            {BACSaveAsProjectMessage}
                                         </MenuItem>
                                     </MenuSection>
                                     {/* {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
@@ -516,7 +563,7 @@ class MenuBar extends React.Component {
                             username={this.props.authorUsername}
                         />
                     ) : null)}
-                    <div className={classNames(styles.menuBarItem)}>
+                    {/* <div className={classNames(styles.menuBarItem)}>
                         {this.props.canShare ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
                                 <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
@@ -525,11 +572,9 @@ class MenuBar extends React.Component {
                                             <ShareButton
                                                 className={styles.menuBarButton}
                                                 isShared={this.props.isShared}
-                                                /* eslint-disable react/jsx-no-bind */
                                                 onClick={() => {
                                                     this.handleClickShare(waitForUpdate);
                                                 }}
-                                                /* eslint-enable react/jsx-no-bind */
                                             />
                                         )
                                     }
@@ -543,7 +588,7 @@ class MenuBar extends React.Component {
                             ) : []
                         )}
                         {this.props.canRemix ? remixButton : []}
-                    </div>
+                    </div> */}
                     {/* <div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
                         {this.props.enableCommunity ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
@@ -714,6 +759,7 @@ MenuBar.propTypes = {
     canShare: PropTypes.bool,
     className: PropTypes.string,
     confirmReadyToReplaceProject: PropTypes.func,
+    hasChangedBeforeSave: PropTypes.func,
     editMenuOpen: PropTypes.bool,
     enableCommunity: PropTypes.bool,
     fileMenuOpen: PropTypes.bool,
@@ -755,7 +801,10 @@ MenuBar.propTypes = {
     showComingSoon: PropTypes.bool,
     userOwnsProject: PropTypes.bool,
     username: PropTypes.string,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    onBACUpdateProject: PropTypes.func,
+    onBACUploadProject: PropTypes.func,
+    onSetBACProjectId: PropTypes.func,
 };
 
 MenuBar.defaultProps = {
@@ -781,7 +830,8 @@ const mapStateToProps = (state, ownProps) => {
         username: user ? user.username : null,
         userOwnsProject: ownProps.authorUsername && user &&
             (ownProps.authorUsername === user.username),
-        vm: state.scratchGui.vm
+        vm: state.scratchGui.vm,
+        BACProjectId: state.scratchGui.BACProjectState.projectId,
     };
 };
 
@@ -802,7 +852,10 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true))
+    onSeeCommunity: () => dispatch(setPlayer(true)),
+    onBACUpdateProject: () => dispatch(BACUpdateProject()),
+    onBACUploadProject: () => dispatch(BACUploadProject()),
+    onSetBACProjectId: (projectId) => dispatch(setBACProjectId(projectId)),
 });
 
 export default compose(

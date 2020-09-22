@@ -24,6 +24,27 @@ const handleTelemetryModalOptOut = () => {
     log('User opted out of telemetry');
 };
 
+const uploadHandler = (projectName, projectData) => {
+    console.log("uploadHandler")
+}
+
+const updateHandler = (projectName, projectData) => {
+    console.log("updateHandler")
+}
+
+const getHandler = (projectId) => {
+    var sourceData = "https://bac100henan.oss-cn-shanghai.aliyuncs.com/bacApp/asset/测试哦.sb3"
+    projectId      = `${projectId}.sb3`
+    if (sourceData.endsWith(projectId)) {
+        return sourceData
+    }
+    return null
+}
+
+const getSnapshot = (dataURI) => {
+    console.log(dataURI)
+}
+
 /*
  * Render the GUI playground. This is a separate function because importing anything
  * that instantiates the VM causes unsupported browsers to crash
@@ -78,10 +99,15 @@ export default appTarget => {
                 canEditTitle
                 backpackVisible
                 showComingSoon
-                backpackHost={backpackHost}
-                canSave={false}
-                BACLogo={BACLogo}
-                onClickLogo={onClickLogo}
+                backpackHost    ={backpackHost}
+                canSave         ={false}
+                BACLogo         ={BACLogo}
+                onClickLogo     ={onClickLogo}
+                BACGetHandler   ={getHandler}
+                BACGetSnapshot  ={getSnapshot}
+                BACUpdateHandler={updateHandler}
+                BACUploadHandler={uploadHandler}
+                projectId={"测试哦"}
             />,
         appTarget);
 };

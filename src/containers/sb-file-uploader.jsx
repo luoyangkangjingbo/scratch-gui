@@ -17,6 +17,10 @@ import {
 } from '../reducers/project-state';
 
 import {
+    setProjectId as setBACProjectId,
+} from '../reducers/BAC-project-state';
+
+import {
     openLoadingProject,
     closeLoadingProject
 } from '../reducers/modals';
@@ -206,6 +210,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     closeFileMenu: () => dispatch(closeFileMenu()),
     onLoadingFinished: (loadingState, success) => {
         dispatch(onLoadedProject(loadingState, ownProps.canSave, success));
+        dispatch(setBACProjectId(null));
         dispatch(closeLoadingProject());
         dispatch(closeFileMenu());
     },

@@ -42,13 +42,13 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             // or it may be set by an even higher HOC, and passed to us.
             // Either way, we now know what the initial projectId should be, so
             // set it in the redux store.
-            if (
-                props.projectId !== '' &&
-                props.projectId !== null &&
-                typeof props.projectId !== 'undefined'
-            ) {
-                this.props.setProjectId(props.projectId.toString());
-            }
+            // if (
+            //     props.projectId !== '' &&
+            //     props.projectId !== null &&
+            //     typeof props.projectId !== 'undefined'
+            // ) {
+            //     this.props.setProjectId(props.projectId.toString());
+            // }
         }
         componentDidUpdate (prevProps) {
             if (prevProps.projectHost !== this.props.projectHost) {
@@ -106,6 +106,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             return (
                 <WrappedComponent
                     fetchingProject={isFetchingWithIdProp}
+                    projectId={projectId}
                     {...componentProps}
                 />
             );

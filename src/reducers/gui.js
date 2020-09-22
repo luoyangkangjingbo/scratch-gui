@@ -16,6 +16,7 @@ import monitorReducer, {monitorsInitialState} from './monitors';
 import monitorLayoutReducer, {monitorLayoutInitialState} from './monitor-layout';
 import projectChangedReducer, {projectChangedInitialState} from './project-changed';
 import projectStateReducer, {projectStateInitialState} from './project-state';
+import BACProjectStateReducer, {BACProjectStateInitialState} from './BAC-project-state';
 import projectTitleReducer, {projectTitleInitialState} from './project-title';
 import fontsLoadedReducer, {fontsLoadedInitialState} from './fonts-loaded';
 import restoreDeletionReducer, {restoreDeletionInitialState} from './restore-deletion';
@@ -50,6 +51,7 @@ const guiInitialState = {
     monitorLayout: monitorLayoutInitialState,
     projectChanged: projectChangedInitialState,
     projectState: projectStateInitialState,
+    BACProjectState: BACProjectStateInitialState,
     projectTitle: projectTitleInitialState,
     fontsLoaded: fontsLoadedInitialState,
     restoreDeletion: restoreDeletionInitialState,
@@ -148,6 +150,7 @@ const guiReducer = combineReducers({
     monitorLayout: monitorLayoutReducer,
     projectChanged: projectChangedReducer,
     projectState: projectStateReducer,
+    BACProjectState: BACProjectStateReducer,
     projectTitle: projectTitleReducer,
     fontsLoaded: fontsLoadedReducer,
     restoreDeletion: restoreDeletionReducer,

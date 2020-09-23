@@ -1,5 +1,7 @@
 import GUI from './containers/gui.jsx';
+import {compose} from 'redux';
 import AppStateHOC from './lib/app-state-hoc.jsx';
+import HashParserHOC from './lib/hash-parser-hoc.jsx';
 import GuiReducer, {guiInitialState, guiMiddleware, initEmbedded, initFullScreen, initPlayer} from './reducers/gui';
 import LocalesReducer, {localesInitialState, initLocale} from './reducers/locales';
 import {ScratchPaintReducer} from 'scratch-paint';
@@ -13,9 +15,16 @@ const guiReducers = {
     scratchPaint: ScratchPaintReducer
 };
 
+const WrappedGui = compose(
+    AppStateHOC,
+    HashParserHOC,
+)(GUI);
+
 export {
     GUI as default,
+    WrappedGui,
     AppStateHOC,
+    HashParserHOC,
     setAppElement,
     guiReducers,
     guiInitialState,

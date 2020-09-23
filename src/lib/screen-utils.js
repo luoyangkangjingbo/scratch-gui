@@ -67,6 +67,13 @@ const getStageDimensions = (stageSize, isFullScreen) => {
         stageDimensions.scale = STAGE_DISPLAY_SCALES[stageSize];
         stageDimensions.height = stageDimensions.scale * stageDimensions.heightDefault;
         stageDimensions.width = stageDimensions.scale * stageDimensions.widthDefault;
+        if (!!window.BACRenderMaxWidth && stageDimensions.width <= window.BACRenderMaxWidth) {
+            stageDimensions.width  = window.innerWidth;
+            if (!! window.BACRenderAdaptation) {
+                stageDimensions.width = stageDimensions.width - window.BACRenderAdaptation
+            }
+            stageDimensions.height = stageDimensions.width * 0.75
+        }
     }
 
     // Round off dimensions to prevent resampling/blurriness

@@ -42,6 +42,11 @@ import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 
 class GUI extends React.Component {
+    constructor(props) {
+        super(props)
+        window.BACRenderMaxWidth   = props.BACRenderMaxWidth
+        window.BACRenderAdaptation = props.BACRenderAdaptation
+    }
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
@@ -81,6 +86,8 @@ class GUI extends React.Component {
             fetchingProject,
             isLoading,
             loadingStateVisible,
+            BACRenderMaxWidth,
+            BACRenderAdaptation,
             ...componentProps
         } = this.props;
         return (

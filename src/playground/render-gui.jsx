@@ -42,7 +42,7 @@ const getHandler = (projectId) => {
 }
 
 const getSnapshot = (dataURI) => {
-    console.log(dataURI)
+    // console.log(dataURI)
 }
 
 /*

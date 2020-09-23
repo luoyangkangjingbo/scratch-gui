@@ -26,7 +26,17 @@ const vmListenerHOC = function (WrappedComponent) {
                 'handleKeyDown',
                 'handleKeyUp',
                 'handleProjectChanged',
-                'handleTargetsUpdate'
+                'handleTargetsUpdate',
+                'handleUpDown',
+                'handleUpUp',
+                'handleDownDown',
+                'handleDownUp',
+                'handleLeftDown',
+                'handleLeftUp',
+                'handleRightDown',
+                'handleRightUp',
+                'handleSpaceDown',
+                'handleSpaceUp',
             ]);
             // We have to start listening to the vm here rather than in
             // componentDidMount because the HOC mounts the wrapped component,
@@ -52,6 +62,26 @@ const vmListenerHOC = function (WrappedComponent) {
             if (this.props.attachKeyboardEvents) {
                 document.addEventListener('keydown', this.handleKeyDown);
                 document.addEventListener('keyup', this.handleKeyUp);
+                if (document.getElementById('BACLeftButton')) {
+                    document.getElementById('BACLeftButton').addEventListener('touchstart', this.handleLeftDown)
+                    document.getElementById('BACLeftButton').addEventListener('touchend', this.handleLeftUp)
+                }
+                if (document.getElementById('BACRightButton')) {
+                    document.getElementById('BACRightButton').addEventListener('touchstart', this.handleRightDown)
+                    document.getElementById('BACRightButton').addEventListener('touchend', this.handleRightUp)
+                }
+                if (document.getElementById('BACUpButton')) {
+                    document.getElementById('BACUpButton').addEventListener('touchstart', this.handleUpDown)
+                    document.getElementById('BACUpButton').addEventListener('touchend', this.handleUpUp)
+                }
+                if (document.getElementById('BACDownButton')) {
+                    document.getElementById('BACDownButton').addEventListener('touchstart', this.handleDownDown)
+                    document.getElementById('BACDownButton').addEventListener('touchend', this.handleDownUp)
+                }
+                if (document.getElementById('BACSpaceButton')) {
+                    document.getElementById('BACSpaceButton').addEventListener('touchstart', this.handleSpaceDown)
+                    document.getElementById('BACSpaceButton').addEventListener('touchend', this.handleSpaceUp)
+                }
             }
             this.props.vm.postIOData('userData', {username: this.props.username});
         }
@@ -112,6 +142,81 @@ const vmListenerHOC = function (WrappedComponent) {
             if (e.target !== document && e.target !== document.body) {
                 e.preventDefault();
             }
+        }
+        handleUpDown (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 38,
+                key: 'ArrowUp',
+                isDown: true
+            });
+        }
+        handleUpUp (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 38,
+                key: 'ArrowUp',
+                isDown: false
+            });
+            e.preventDefault();
+        }
+        handleDownDown (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 40,
+                key: 'ArrowDown',
+                isDown: true
+            });
+        }
+        handleDownUp (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 40,
+                key: 'ArrowDown',
+                isDown: false
+            });
+            e.preventDefault();
+        }
+        handleLeftDown (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 37,
+                key: 'ArrowLeft',
+                isDown: true
+            });
+        }
+        handleLeftUp (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 37,
+                key: 'ArrowLeft',
+                isDown: false
+            });
+            e.preventDefault();
+        }
+        handleRightDown (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 39,
+                key: 'ArrowRight',
+                isDown: true
+            });
+        }
+        handleRightUp (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 39,
+                key: 'ArrowRight',
+                isDown: false
+            });
+            e.preventDefault();
+        }
+        handleSpaceDown (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 32,
+                key: ' ',
+                isDown: true
+            });
+        }
+        handleSpaceUp (e) {
+            this.props.vm.postIOData('keyboard', {
+                keyCode: 32,
+                key: ' ',
+                isDown: false
+            });
+            e.preventDefault();
         }
         render () {
             const {

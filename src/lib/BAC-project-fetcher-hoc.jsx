@@ -113,6 +113,7 @@ const BACProjectFetcherHOC = function (WrappedComponent) {
             } = this.props;
             return (
                 <WrappedComponent
+                    BACGetSnapshot={BACGetSnapshot?BACGetSnapshot:null}
                     {...componentProps}
                 />
             )

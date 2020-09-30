@@ -52,6 +52,9 @@ const BACProjectSaverHOC = function (WrappedComponent) {
         uploadProject() {
             this.props.saveProjectSb3().then(content => {
                 var projectId = this.getProjectTitle(this.props.projectTitle,'Scratch作品')
+                if (this.props.BACGetSnapshot) {
+                    this.props.vm.renderer.requestSnapshot(this.props.BACGetSnapshot)
+                }
                 this.props.BACUploadHandler(projectId, content)
                 this.props.setBACProjectId(projectId)
             })
@@ -62,6 +65,7 @@ const BACProjectSaverHOC = function (WrappedComponent) {
             const {
                 BACUpdateHandler,
                 BACUploadHandler,
+                BACGetSnapshot,
                 isUpdatingProject,
                 isUploadingProject,
                 projectTitle,
@@ -73,6 +77,7 @@ const BACProjectSaverHOC = function (WrappedComponent) {
             } = this.props;
             return (
                 <WrappedComponent
+                    BACGetSnapshot={BACGetSnapshot?BACGetSnapshot:null}
                     {...componentProps}
                 />
             )
